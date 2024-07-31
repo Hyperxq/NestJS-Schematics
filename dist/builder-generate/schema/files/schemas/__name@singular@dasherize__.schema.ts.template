@@ -1,7 +1,0 @@
-import * as mongoose from 'mongoose';
-
-export const <%= singular(classify(name)) %>Schema = new mongoose.Schema({}, {versionKey: false});
-<%# Properties section %>
-<%= singular(classify(name)) %>Schema.add({
-// Don't set any type with a complex object like: Object.some_property [REMOVE THIS COMMENT AFTER EXECUTE THE RESOURCE SCHEMATIC]
-});
