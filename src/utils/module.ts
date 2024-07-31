@@ -22,7 +22,6 @@ export function addDeclarationToModule(options: SchematicOptions): Rule {
     const content = tree.read(moduleOptions.module)?.toString();
 
     const declarator: ModuleDeclarator = new ModuleDeclarator();
-    console.log(moduleOptions);
     tree.overwrite(
       moduleOptions.module,
       declarator.declare(content ?? '', {
