@@ -1,0 +1,44 @@
+import {Args, Mutation, Query, Resolver} from '@nestjs/graphql';
+import {<%= singular(classify(name)) %>} from './entities/<%= singular(dasherize(name)) %>.entity'
+import {<%= singular(classify(name)) %>Service} from './<%= singular(dasherize(name)) %>.service';
+import {Create<%= singular(classify(name)) %>} from './dto/create-<%= singular(dasherize(name)) %>.input.dto';
+import {Get<%= singular(classify(name)) %>} from './dto/get-<%= singular(dasherize(name)) %>.input.dto';
+import {Update<%= singular(classify(name)) %>Args} from './dto/update-<%= singular(dasherize(name)) %>.input.dto';
+import {TryAndCatch} from '@app/common';
+
+@Resolver(() => <%= singular(classify(name)) %>)
+export class <%= singular(classify(name)) %>Resolver {
+    constructor(private readonly <%= singular(lowercased(name)) %>Service: <%= singular(classify(name)) %>Service) {}
+
+    @Mutation(() => <%= singular(classify(name)) %>, {name: 'create<%= singular(classify(name)) %>'})
+    @TryAndCatch()
+    create(@Args('create<%= singular(classify(name)) %>') create<%= singular(classify(name)) %>: Create<%= singular(classify(name)) %>) {
+        return this.<%= singular(lowercased(name)) %>Service.create(create<%= singular(classify(name)) %>);
+    }
+
+    @Query(() => [<%= singular(classify(name)) %>], {name: '<%= plural(name) %>', description: 'returns list of <%= name %>'})
+    @TryAndCatch()
+    findAll() {
+        return this.<%= singular(lowercased(name)) %>Service.findAll();
+    }
+
+    @Query(() => <%= singular(classify(name)) %>, {name: '<%= singular(name) %>', description: 'gets <%= classify(name) %> either by keys'})
+    @TryAndCatch()
+    findOne(@Args('get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>) {
+        return this.<%= singular(lowercased(name)) %>Service.findOne(get<%= singular(classify(name)) %>);
+    }
+
+    @Mutation(() => <%= singular(classify(name)) %>, {name: 'update<%= singular(classify(name)) %>'})
+    @TryAndCatch()
+    update(@Args('update<%= singular(classify(name)) %>Args') update<%= singular(classify(name)) %>: Update<%= singular(classify(name)) %>Args) {
+        return this.<%= singular(lowercased(name)) %>Service.update(update<%= singular(classify(name)) %>);
+    }
+
+    @Mutation(() => <%= singular(classify(name)) %>, {name: 'remove<%= singular(classify(name)) %>'})
+    @TryAndCatch()
+    remove(
+    @Args('Get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>
+    ) {
+        return this.<%= singular(lowercased(name)) %>Service.remove(get<%= singular(classify(name)) %>);
+    }
+}

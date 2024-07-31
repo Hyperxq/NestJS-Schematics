@@ -1,0 +1,31 @@
+import {Injectable} from '@nestjs/common';
+import {<%= singular(classify(name)) %>Repository} from './<%= singular(dasherize(name)) %>.repository';
+import {<%= singular(classify(name)) %>} from './entities/<%= singular(dasherize(name)) %>.entity';
+import {Create<%= singular(classify(name)) %>} from './dto/create-<%= singular(name) %>.input.dto';
+import {Get<%= singular(classify(name)) %>} from './dto/get-<%= singular(name) %>.input.dto';
+import {Update<%= singular(classify(name)) %>Args} from './dto/update-<%= singular(lowercased(name)) %>.input.dto';
+
+@Injectable()
+export class <%= singular(classify(name)) %>Service {
+    constructor(private readonly repo: <%= singular(classify(name)) %>Repository) {}
+
+    async create(create<%= singular(classify(name)) %>: Create<%= singular(classify(name)) %>): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.create<Create<%= singular(classify(name)) %>, <%= singular(classify(name)) %>>(create<%= singular(classify(name)) %>);
+    }
+
+    async findAll(): Promise<<%= singular(classify(name)) %>[] | undefined> {
+        return await this.repo.findMany<<%= singular(classify(name)) %>>({});
+    }
+
+    async findOne(get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.findOne<<%= singular(classify(name)) %>>(get<%= singular(classify(name)) %>);
+    }
+
+    async update({query, payload}: Update<%= singular(classify(name)) %>Args): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.update<<%= singular(classify(name)) %>>(query, payload, {upsert: false});
+    }
+
+    async remove(remove<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.remove<<%= singular(classify(name)) %>>(remove<%= singular(classify(name)) %>);
+    }
+}

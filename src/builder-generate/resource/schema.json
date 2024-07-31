@@ -1,0 +1,7 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "$id": "resource",
+    "title": "Create a new CRUD with resolvers, services and repositories",
+    "type": "object",
+    "properties": {}
+}
