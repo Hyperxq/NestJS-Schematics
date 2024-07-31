@@ -11,6 +11,7 @@ jsconfig.json
 
 # Misc
 node_modules/
+dist/
 npm-debug.log*
 yarn-error.log*
 
@@ -18,4 +19,3 @@ yarn-error.log*
 **/.DS_Store
 .DS_Store
 
-dist/
