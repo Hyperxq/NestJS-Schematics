@@ -1,0 +1,15 @@
+import { Injectable } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model } from 'mongoose';
+// import { AbstractRepository } from '@app/common'; -> if you have an AbstractRepository
+<%= importText %>
+
+@Injectable()
+export class <%= name %>Repository extends AbstractRepository<<%= name %>> {
+  constructor(
+    @InjectModel(<%= name %>.name) private readonly <%= singular(lowercased(name)) %>Model: Model<<%= name %>>,
+    @InjectConnection() connection: Connection
+  ) {
+    super(<%= singular(lowercased(name)) %>Model, connection);
+  }
+}

@@ -1,15 +1,15 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import alias from '@rollup/plugin-alias';
-import cleaner from 'rollup-plugin-cleaner';
-import copy from 'rollup-plugin-copy';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import swc from '@rollup/plugin-swc';
-import { dts } from 'rollup-plugin-dts';
 import glob from 'glob';
 import path from 'node:path';
+import cleaner from 'rollup-plugin-cleaner';
+import copy from 'rollup-plugin-copy';
+import { dts } from 'rollup-plugin-dts';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import progress from 'rollup-plugin-progress';
+import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import { fileURLToPath } from 'url';
-
 // Helper functions to normalize paths and remove 'src' prefix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +31,7 @@ const transformedPaths = tsFilesSrc.reduce((acc, filePath) => {
 const basePlugins = [
   tsConfigPaths(),
   peerDepsExternal(),
+  progress(),
   nodeResolve({ extensions: ['.ts', '.js', '.json'] }),
   swc({
     include: /\.ts$/,
@@ -45,30 +46,31 @@ const basePlugins = [
 
 // Base external dependencies configuration, * if you have a dependencies that you will use after the solution will be compiled, add here!
 const baseExternal = [
-  'node:module',
-  'ansi-colors',
-  'ora',
-  'inquirer',
-  'tty',
-  'node-emoji',
-  '@angular-devkit/schematics/tasks',
+  '@angular-devkit/core',
+  '@angular-devkit/core/src/utils/strings',
   '@angular-devkit/schematics-cli',
   '@angular-devkit/schematics',
-  '@angular-devkit/core',
-  'winston',
-  'winston-console-format',
-  'jsonc-parser',
-  'typescript',
-  'json5',
-  '@nestjs/cli',
-  '@nestjs/cli/lib/utils/project-utils',
-  '@nestjs/cli/lib/utils/load-configuration',
-  '@nestjs/cli/lib/compiler/helpers/get-value-or-default',
-  '@angular-devkit/core/src/utils/strings',
   '@angular-devkit/schematics/src/tree/interface',
+  '@angular-devkit/schematics/tasks',
+  '@nestjs/cli',
+  '@nestjs/cli/lib/compiler/helpers/get-value-or-default',
+  '@nestjs/cli/lib/utils/load-configuration',
+  '@nestjs/cli/lib/utils/project-utils',
   '@nestjs/schematics',
+  '@phenomnomnominal/tsquery',
+  'ansi-colors',
+  'inquirer',
+  'json5',
   'jsonc-parser',
+  'jsonc-parser',
+  'node-emoji',
+  'node:module',
+  'ora',
   'pluralize',
+  'tty',
+  'typescript',
+  'winston-console-format',
+  'winston',
 ];
 
 // Rollup configuration for the main build
@@ -96,23 +98,27 @@ const mainConfig = {
             delete packageData.engines;
             return JSON.stringify(packageData, null, 2);
           },
+          verbose: false,
         },
-        { src: 'README.md', dest: 'dist' },
-        { src: 'src/collection.json', dest: 'dist' },
+        { src: 'README.md', dest: 'dist', verbose: false, },
+        { src: 'src/collection.json', dest: 'dist', verbose: false, },
         {
           src: 'src/**/*.json',
           dest: 'dist',
           rename: (name, extension, fullPath) => removeSrcPath(fullPath),
+          verbose: false,
         },
         {
           src: 'src/**/*.d.ts',
           dest: 'dist',
           rename: (name, extension, fullPath) => removeSrcPath(fullPath),
+          verbose: false,
         },
         {
           src: ['src/**/*.template', 'src/**/.*.template'],
           dest: 'dist',
           rename: (name, extension, fullPath) => removeSrcPath(fullPath),
+          verbose: false,
         },
       ],
       hook: 'writeBundle',
@@ -142,7 +148,7 @@ const dtsConfig = {
     dir: 'dist',
     format: 'es',
   },
-  plugins: [dts()],
+  plugins: [dts(), progress()]
 };
 
 // Exporting all configurations

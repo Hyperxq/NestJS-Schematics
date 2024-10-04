@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"],
     "target": "ES2021",
     "module": "CommonJS",
     "moduleResolution": "node",
@@ -14,15 +12,14 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
+    "emitDeclarationOnly": true,
+    "stripInternal": true,
+    "declarationMap": false,
+    "declaration": true,
+    "declarationDir": "./dist",
     "tsBuildInfoFile": "./dist/tsbuildinfo",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
 }

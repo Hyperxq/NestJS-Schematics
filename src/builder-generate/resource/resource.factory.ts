@@ -28,12 +28,12 @@ export function resourceFactory(options: SchematicOptions): Rule {
     if (!response) {
       return;
     }
-    const { schema, subSchemas } = response;
-    console.log(schema.name);
-    console.log(`Does ${schema.name} have sub-schema: ${(subSchemas ?? []).length > 0}`);
-    console.table(schema.properties);
+    // const { schema, subSchemas } = response;
+    // console.log(schema.name);
+    // console.log(`Does ${schema.name} have sub-schema: ${(subSchemas ?? []).length > 0}`);
+    // console.table(schema.properties);
 
-    return branchAndMerge(chain([getSchemaRules(schema), getSubSchemaRules(subSchemas)]), MergeStrategy.ContentOnly);
+    // return branchAndMerge(chain([getSchemaRules(schema), getSubSchemaRules(subSchemas)]), MergeStrategy.ContentOnly);
   };
 }
 

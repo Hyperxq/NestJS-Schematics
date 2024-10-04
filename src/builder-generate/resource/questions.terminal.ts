@@ -29,7 +29,12 @@ export async function ChooseSchemaQuestion<T = string>(schemas: { name: string; 
 }
 
 export async function AskForNotIndexesQuestion() {
-  const message = bold(colors.green('Would you like to use all the properties instead indexes?'));
+  const message = bold(
+    colors.green(
+      // eslint-disable-next-line max-len
+      `Would you like to use all properties as keys in the DTO instead?`,
+    ),
+  );
 
   return await askConfirmation(message, false);
 }

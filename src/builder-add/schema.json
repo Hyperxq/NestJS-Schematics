@@ -3,5 +3,11 @@
     "$id": "BuilderAdd",
     "title": "Builder Add",
     "type": "object",
-    "properties": {}
+    "properties": {
+        "skipInstall": {
+            "type": "boolean",
+            "description": "Skip the installation of the dependencies",
+            "default": false
+        }
+    }
 }

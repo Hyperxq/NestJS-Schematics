@@ -1,3 +1,5 @@
+import { MongooseSchemaDefinition } from '../../utils/interfaces/mongoose-schema.interfaces';
+
 export interface SchemaResult {
   schema: SchemaInfo;
   subSchemas: SchemaInfo[];
@@ -12,8 +14,9 @@ export interface Schema {
 export interface SchemaInfo {
   path: string;
   name: string;
-  properties: { [key: string]: any };
+  properties: MongooseSchemaDefinition;
   skipIndexes: boolean;
+  fileContent: string;
 }
 
 export interface Properties {

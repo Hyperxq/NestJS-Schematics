@@ -1,0 +1,28 @@
+import { Injectable } from '@nestjs/common';
+<%= imports %>
+
+
+@Injectable()
+export class <%= name %>Service {
+    constructor(private readonly repo: <%= name %>Repository) {}
+
+    async create(create<%= name %>: Create<%= name %>): Promise<<%= name %>> {
+        return await this.repo.create<Create<%= name %>, <%= name %>>(create<%= name %>);
+    }
+
+    async findAll(): Promise<<%= name %>[] | undefined> {
+        return await this.repo.findMany<<%= name %>>({});
+    }
+
+    async findOne(get<%= name %>: Get<%= name %>): Promise<<%= name %>> {
+        return await this.repo.findOne<<%= name %>>(get<%= name %>);
+    }
+
+    async update({query, payload}: Update<%= name %>Args): Promise<<%= name %>> {
+        return await this.repo.update<<%= name %>>(query, payload, {upsert: false});
+    }
+
+    async remove(remove<%= name %>: Get<%= name %>): Promise<<%= name %>> {
+        return await this.repo.remove<<%= name %>>(remove<%= name %>);
+    }
+}

@@ -21,6 +21,24 @@
       "aliases": [
         "s"
       ]
+    },
+    "crud-graphql-mongo": {
+      "description": "This is an empty schematic",
+      "factory": "./builder-generate/crud-graphql-mongo/crud-graphql-mongo.factory#crudGraphqlMongoFactory",
+      "schema": "./builder-generate/crud-graphql-mongo/schema.json",
+      "aliases": [
+        "cgm"
+      ]
+    },
+    "install-dependencies": {
+      "description": "This is an empty schematic",
+      "factory": "./builder-generate/install-dependencies/install-dependencies.factory#installDependenciesFactory",
+      "schema": "./builder-generate/install-dependencies/schema.json"
+    },
+    "prepare-env": {
+      "description": "This is an empty schematic",
+      "factory": "./builder-generate/prepare-env/prepare-env.factory#prepareEnvFactory",
+      "schema": "./builder-generate/prepare-env/schema.json"
     }
   }
 }

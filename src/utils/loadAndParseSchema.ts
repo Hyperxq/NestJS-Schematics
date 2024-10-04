@@ -1,11 +1,12 @@
-import { deepCopy, normalize } from '@angular-devkit/core';
-import { SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import { normalize } from '@angular-devkit/core';
+import { SchematicContext, Tree } from '@angular-devkit/schematics';
 import { cyan } from 'ansi-colors';
 import { parse } from 'json5';
 
 import { AskForNotIndexesQuestion, ChooseSchemaQuestion } from '../builder-generate/resource/questions.terminal';
-import { Properties, Schema, SchemaInfo, SchemaResult } from '../builder-generate/resource/resource.interfaces';
+import { Properties, Schema, SchemaInfo } from '../builder-generate/resource/resource.interfaces';
 import { SchematicOptions } from '../builder-generate/resource/resource.schema';
+import { parseMongooseSchemaFromContent } from './AST';
 import { colors } from './color';
 
 let schemasCache: { path: string; schemaName: string; fileContent: string }[];
@@ -14,13 +15,13 @@ export async function loadAndParseSchema(
   { sourceRoot }: SchematicOptions,
   tree: Tree,
   _context: SchematicContext,
-): Promise<SchemaResult | undefined> {
+): Promise<SchemaInfo[]> {
   const schemas = getSchemas(tree, sourceRoot!);
 
   if (schemas.length === 0) {
-    console.log(colors.bold(colors.red('Schemas not found')));
+    console.log(colors.bold(colors.red(`We didn't find any schema`)));
 
-    return;
+    process.exit();
   }
 
   const schema = await ChooseSchemaQuestion<{
@@ -30,23 +31,24 @@ export async function loadAndParseSchema(
   }>(schemas.map((schema) => ({ name: cyan(schema.schemaName), value: schema })));
 
   const { properties, schemaName, skipIndexes, path } = await getPropertiesFromSchema(schema);
-  const { subSchemas, properties: propertiesUpdated } = await checkSubSchemas(
-    path.replace('/files', ''),
-    schemaName,
-    properties,
-    sourceRoot!,
-    tree,
-  );
+  // const { subSchemas, properties: propertiesUpdated } = await checkSubSchemas(
+  //   path.replace('/files', ''),
+  //   schemaName,
+  //   properties,
+  //   sourceRoot!,
+  //   tree,
+  // );
 
-  return {
-    schema: {
+  return [
+    {
       path: path.replace('/files', ''),
       name: schemaName.replace('Schema', '').toLowerCase(),
-      properties: propertiesUpdated,
+      fileContent: schema.fileContent,
+      properties,
+      // properties: propertiesUpdated,
       skipIndexes,
     },
-    subSchemas,
-  };
+  ];
 }
 
 function getSchemaFiles(tree: Tree, basePath: string) {
@@ -65,9 +67,10 @@ function getSchemaFiles(tree: Tree, basePath: string) {
 
 async function getPropertiesFromSchema(schema: Schema, askIndexNotFound = true) {
   const { fileContent, schemaName, path } = schema;
-  const properties: { [key: string]: { [key: string]: any } } = extractProperties(fileContent!, schema.schemaName);
+  const { properties, indexes } = parseMongooseSchemaFromContent(fileContent);
+  // const properties: { [key: string]: { [key: string]: any } } = extractProperties(fileContent!, schema.schemaName);
 
-  const indexes = extractIndexes(fileContent!, schemaName) ?? [];
+  // const indexes = extractIndexes(fileContent!, schemaName) ?? [];
   let skipIndexes = false;
   if (!indexes || indexes.length === 0) {
     if (askIndexNotFound) {
@@ -83,7 +86,7 @@ async function getPropertiesFromSchema(schema: Schema, askIndexNotFound = true) 
 
   return {
     path,
-    schemaName: schema.schemaName,
+    schemaName,
     properties,
     skipIndexes,
   };
@@ -130,63 +133,63 @@ function getSchemas(tree: Tree, sourceRoot: string) {
   return schemasCache;
 }
 
-async function checkSubSchemas(
-  schemaPath: string,
-  schemaName: string,
-  properties: Properties,
-  sourceRoot: string,
-  tree: Tree,
-): Promise<{ subSchemas: SchemaInfo[]; properties: Properties }> {
-  try {
-    const propertiesCloned = deepCopy(properties);
-    const subSchemasProperties = getNotMongooseProperties(properties);
+// async function checkSubSchemas(
+//   schemaPath: string,
+//   schemaName: string,
+//   properties: Properties,
+//   sourceRoot: string,
+//   tree: Tree,
+// ): Promise<{ subSchemas: SchemaInfo[]; properties: Properties }> {
+//   try {
+//     const propertiesCloned = deepCopy(properties);
+//     const subSchemasProperties = getNotMongooseProperties(properties);
 
-    if (subSchemasProperties.length === 0 || subSchemasProperties === undefined) {
-      return {
-        subSchemas: [],
-        properties,
-      };
-    }
+//     if (subSchemasProperties.length === 0 || subSchemasProperties === undefined) {
+//       return {
+//         subSchemas: [],
+//         properties,
+//       };
+//     }
 
-    const schemas = getSchemas(tree, sourceRoot!);
+//     const schemas = getSchemas(tree, sourceRoot!);
 
-    const subSchemas: SchemaInfo[] = [];
+//     const subSchemas: SchemaInfo[] = [];
 
-    for (const [propertyName, content] of subSchemasProperties) {
-      if (content.type === undefined) {
-        throw new SchematicsException(`${propertyName} from ${schemaName} needs to have a type`);
-      }
-      const { type } = content;
-      const schema = schemas.find((s) => s.schemaName === type);
-      if (!schema) {
-        throw new SchematicsException(
-          `${propertyName} is was detected like a sub-schema but no schema was found with the name: ${type}`,
-        );
-      }
-      // Removed the Schema type name with the named of the entity that we will create.
-      propertiesCloned[propertyName].type = schema.schemaName.replace('Schema', '').toLowerCase();
+//     for (const [propertyName, content] of subSchemasProperties) {
+//       if (content.type === undefined) {
+//         throw new SchematicsException(`${propertyName} from ${schemaName} needs to have a type`);
+//       }
+//       const { type } = content;
+//       const schema = schemas.find((s) => s.schemaName === type);
+//       if (!schema) {
+//         throw new SchematicsException(
+//           `${propertyName} is was detected like a sub-schema but no schema was found with the name: ${type}`,
+//         );
+//       }
+//       // Removed the Schema type name with the named of the entity that we will create.
+//       propertiesCloned[propertyName].type = schema.schemaName.replace('Schema', '').toLowerCase();
 
-      const { properties, schemaName: subSchemaName, skipIndexes, path } = await getPropertiesFromSchema(schema, false);
+//       const { properties, schemaName: subSchemaName, skipIndexes, path } = await getPropertiesFromSchema(schema, false);
 
-      // propertiesCloned[propertyName].importUrl = path;
-      propertiesCloned[propertyName].importUrl = getRelativePath(schemaPath, schema.path);
+//       // propertiesCloned[propertyName].importUrl = path;
+//       propertiesCloned[propertyName].importUrl = getRelativePath(schemaPath, schema.path);
 
-      subSchemas.push({
-        path,
-        name: propertiesCloned[propertyName].type,
-        properties,
-        skipIndexes,
-      });
-    }
+//       subSchemas.push({
+//         path,
+//         name: propertiesCloned[propertyName].type,
+//         properties,
+//         skipIndexes,
+//       });
+//     }
 
-    return {
-      subSchemas,
-      properties: propertiesCloned,
-    };
-  } catch (e) {
-    throw new SchematicsException(`Something happen when trying to check sub-schemas: ${e}`);
-  }
-}
+//     return {
+//       subSchemas,
+//       properties: propertiesCloned,
+//     };
+//   } catch (e) {
+//     throw new SchematicsException(`Something happen when trying to check sub-schemas: ${e}`);
+//   }
+// }
 
 function getRelativePath(from: string, to: string): string {
   // If both paths are the same, return './'

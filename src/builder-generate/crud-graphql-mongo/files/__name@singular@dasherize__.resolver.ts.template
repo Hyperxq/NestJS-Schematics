@@ -1,0 +1,34 @@
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+<%= imports %>
+
+@Resolver(() => <%= singular(classify(name)) %>)
+export class <%= singular(classify(name)) %>Resolver {
+    constructor(private readonly <%= singular(lowercased(name)) %>Service: <%= singular(classify(name)) %>Service) {}
+
+    @Mutation(() => <%= singular(classify(name)) %>, {name: 'create<%= singular(classify(name)) %>'})
+    create(@Args('create<%= singular(classify(name)) %>') create<%= singular(classify(name)) %>: Create<%= singular(classify(name)) %>) {
+        return this.<%= singular(lowercased(name)) %>Service.create(create<%= singular(classify(name)) %>);
+    }
+
+    @Query(() => [<%= singular(classify(name)) %>], {name: '<%= plural(name) %>', description: 'returns list of <%= name %>'})
+    findAll() {
+        return this.<%= singular(lowercased(name)) %>Service.findAll();
+    }
+
+    @Query(() => <%= singular(classify(name)) %>, {name: '<%= singular(name) %>', description: 'gets <%= classify(name) %> either by keys'})
+    findOne(@Args('get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>) {
+        return this.<%= singular(lowercased(name)) %>Service.findOne(get<%= singular(classify(name)) %>);
+    }
+
+    @Mutation(() => <%= singular(classify(name)) %>, {name: 'update<%= singular(classify(name)) %>'})
+    update(@Args('update<%= singular(classify(name)) %>Args') update<%= singular(classify(name)) %>: Update<%= singular(classify(name)) %>Args) {
+        return this.<%= singular(lowercased(name)) %>Service.update(update<%= singular(classify(name)) %>);
+    }
+
+    @Mutation(() => <%= singular(classify(name)) %>, {name: 'remove<%= singular(classify(name)) %>'})
+    remove(
+    @Args('Get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>
+    ) {
+        return this.<%= singular(lowercased(name)) %>Service.remove(get<%= singular(classify(name)) %>);
+    }
+}

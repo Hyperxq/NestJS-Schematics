@@ -1,0 +1,7 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "$id": "crud-graphql-mongo",
+    "title": "a custom schematic ",
+    "type": "object",
+    "properties": {}
+}
