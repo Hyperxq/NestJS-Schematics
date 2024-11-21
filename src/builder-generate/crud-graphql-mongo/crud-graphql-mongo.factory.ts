@@ -14,7 +14,9 @@ import {
   loadAndParseSchema,
 } from '../../utils';
 import { addShortImportToTsConfig } from '../../utils/AST';
-import { MongooseSchemaDefinition } from '../../utils/interfaces/mongoose-schema.interfaces';
+import { OutputType } from '../../utils/enums/output-types.enum';
+import { SourceType } from '../../utils/enums/source-types.enum';
+import { MainFactory } from '../../utils/factories/main-factory';
 import { SchematicOptions } from './crud-graphql-mongo.schema';
 import { moduleImportsData, repositoryImportData, resolverImportsData, serviceImportsData } from './imports.data';
 import { moduleProvidersData } from './providers.data';
@@ -44,6 +46,8 @@ export function crudGraphqlMongoFactory(options: SchematicOptions) {
 
     const schemas = await loadAndParseSchema(options, tree, context);
     const rules: Rule[] = [];
+    // Send all the properties and info.
+    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL, []);
     schemas.forEach(({ name, properties, path }) => {
       // TODO: for now we will generate entities in the simple way, we need to support all the types of properties.
       console.log('properties', properties);

@@ -1,11 +1,11 @@
-import { EntityFactory } from './entity-factory';
-import { GetDTOFactory } from './get-dto-factory';
-import { IFactorySet, IPropertyFactory } from './property-factory.interfaces';
+import { EntityFactory } from './graphql/entity-factory';
+import { GetDTOFactory } from './graphql/get-dto-factory';
+import { IFactorySet, IPropertyFactory } from '../interfaces/property-factory.interfaces';
 
 /**
  * A set of factories specifically for Mongoose schemas.
  */
-export class MongooseFactorySet implements IFactorySet {
+export class GraphQLFactorySet implements IFactorySet {
   getEntityFactory(): IPropertyFactory {
     return new EntityFactory();
   }

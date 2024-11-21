@@ -1,6 +1,6 @@
 // factories/IPropertyFactory.ts
 
-import { MongooseSchemaDefinition } from '../interfaces/mongoose-schema.interfaces';
+import { SchemaMetadata } from './agnostic-data.interfaces';
 
 /**
  * The shared interface that all property factories (e.g., GetDTO, CreateDTO, Entity) will implement.
@@ -11,11 +11,11 @@ export interface IPropertyFactory {
    * @param properties - The properties to generate content from.
    * @returns A string representing the generated content (e.g., TypeScript class definition).
    */
-  generate(properties: Record<string, any>): string;
+  generate(properties: SchemaMetadata): string;
 }
 
 export interface IFactory {
-  generate(properties: MongooseSchemaDefinition): string;
+  generate(properties: SchemaMetadata): string;
 }
 
 export interface IFactorySet {

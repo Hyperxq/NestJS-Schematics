@@ -1,4 +1,4 @@
-import { IPropertyFactory } from './property-factory.interfaces';
+import { IPropertyFactory } from '../../interfaces/property-factory.interfaces';
 
 export class EntityFactory implements IPropertyFactory {
   generate(properties: Record<string, any>): string {

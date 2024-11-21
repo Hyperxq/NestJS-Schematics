@@ -127,7 +127,7 @@ interface MapSchemaTypeOptions {
 /**
  * Interface for Mongoose Schema Types for a Field.
  */
-type MongooseSchemaField =
+export type MongooseSchemaField =
   | StringSchemaTypeOptions
   | NumberSchemaTypeOptions
   | DateSchemaTypeOptions
@@ -140,7 +140,7 @@ type MongooseSchemaField =
 /**
  * Interface representing a Mongoose Schema Definition for a single field.
  */
-interface MongooseSchemaDefinitionField {
+export interface MongooseSchemaDefinitionField {
   [fieldName: string]: MongooseSchemaField;
 }
 
