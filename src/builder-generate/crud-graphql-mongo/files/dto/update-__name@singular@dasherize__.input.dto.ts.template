@@ -3,7 +3,7 @@ import {Get<%= singular(classify(name)) %>Input} from './get-<%= singular(dasher
 
 @InputType()
 export class Update<%= singular(classify(name)) %>Payload {
-<%= content %>
+  <%= content %>
 }
 
 @InputType()

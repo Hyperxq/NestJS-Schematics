@@ -8,6 +8,6 @@ export function installDependenciesFactory(): Rule {
     // * Fastify and Apollo: npm i @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/fastify graphql
     // * Fastify and Mercurius: npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
     // * Database: Mongo/Mongoose, Postgress/TypeORM
-    // @nestjs/graphql @nestjs/apollo @apollo/server graphql class-validator class-transformer @nestjs/mongoose mongoose
+    // @nestjs/graphql @nestjs/apollo @apollo/server graphql class-validator class-transformer @nestjs/mongoose mongoose joi @nestjs/config
   };
 }

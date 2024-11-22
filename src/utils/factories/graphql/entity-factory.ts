@@ -7,7 +7,7 @@ import { ContentResult, IPropertyFactory } from '../../interfaces/property-facto
 export class EntityFactory implements IPropertyFactory {
   generate(schemaMetadata: SchemaMetadata[]): ContentResult[] {
     return schemaMetadata.map(({ fields, name, path }) => {
-      const imports = generateImports(fields, true); // Generate GraphQL-specific imports
+      const imports = generateImports(fields, true, false); // Generate GraphQL-specific imports
       const content = this.generateFields(fields);
 
       return {

@@ -2,5 +2,5 @@
 
 @InputType()
 export class Get<%= singular(classify(name)) %>Input {
-<%= content %>
+  <%= content %>
 }

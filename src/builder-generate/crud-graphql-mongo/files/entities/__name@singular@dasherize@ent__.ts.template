@@ -2,5 +2,5 @@
 
 @ObjectType()
 export class <%= singular(classify(name)) %> {
-<%= content %>
+  <%= content %>
 }

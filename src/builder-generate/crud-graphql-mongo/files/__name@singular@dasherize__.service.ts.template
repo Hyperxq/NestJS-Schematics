@@ -7,7 +7,7 @@ export class <%= name %>Service {
     constructor(private readonly repo: <%= name %>Repository) {}
 
     async create(create<%= name %>: Create<%= name %>Input): Promise<<%= name %>> {
-        return await this.repo.create<Create<%= name %>, <%= name %>>(create<%= name %>);
+        return await this.repo.create<Create<%= name %>Input, <%= name %>>(create<%= name %>);
     }
 
     async findAll(): Promise<<%= name %>[] | undefined> {

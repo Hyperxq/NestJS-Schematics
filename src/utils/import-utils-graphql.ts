@@ -4,7 +4,7 @@ import { FieldMetadata } from './interfaces/agnostic-data.interfaces';
 /**
  * Generates imports for a class or DTO and combines imports from the same library.
  */
-export function generateImports(fields: FieldMetadata[], forGraphQL = true): string {
+export function generateImports(fields: FieldMetadata[], forGraphQL = true, isInput = true): string {
   const importMap = new Map<string, Set<string>>();
 
   const addImport = (library: string, specifier: string) => {
@@ -16,7 +16,7 @@ export function generateImports(fields: FieldMetadata[], forGraphQL = true): str
 
   if (forGraphQL) {
     addImport('@nestjs/graphql', 'Field');
-    addImport('@nestjs/graphql', 'InputType');
+    addImport('@nestjs/graphql', isInput ? 'InputType' : 'ObjectType');
   }
 
   if (fields.some((field) => field.validations?.min !== undefined)) {
