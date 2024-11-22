@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 export class <%= name %>Service {
     constructor(private readonly repo: <%= name %>Repository) {}
 
-    async create(create<%= name %>: Create<%= name %>): Promise<<%= name %>> {
+    async create(create<%= name %>: Create<%= name %>Input): Promise<<%= name %>> {
         return await this.repo.create<Create<%= name %>, <%= name %>>(create<%= name %>);
     }
 
@@ -14,7 +14,7 @@ export class <%= name %>Service {
         return await this.repo.findMany<<%= name %>>({});
     }
 
-    async findOne(get<%= name %>: Get<%= name %>): Promise<<%= name %>> {
+    async findOne(get<%= name %>: Get<%= name %>Input): Promise<<%= name %>> {
         return await this.repo.findOne<<%= name %>>(get<%= name %>);
     }
 
@@ -22,7 +22,7 @@ export class <%= name %>Service {
         return await this.repo.update<<%= name %>>(query, payload, {upsert: false});
     }
 
-    async remove(remove<%= name %>: Get<%= name %>): Promise<<%= name %>> {
+    async remove(remove<%= name %>: Get<%= name %>Input): Promise<<%= name %>> {
         return await this.repo.remove<<%= name %>>(remove<%= name %>);
     }
 }

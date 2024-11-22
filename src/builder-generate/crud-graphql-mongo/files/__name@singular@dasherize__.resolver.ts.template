@@ -6,7 +6,7 @@ export class <%= singular(classify(name)) %>Resolver {
     constructor(private readonly <%= singular(lowercased(name)) %>Service: <%= singular(classify(name)) %>Service) {}
 
     @Mutation(() => <%= singular(classify(name)) %>, {name: 'create<%= singular(classify(name)) %>'})
-    create(@Args('create<%= singular(classify(name)) %>') create<%= singular(classify(name)) %>: Create<%= singular(classify(name)) %>) {
+    create(@Args('create<%= singular(classify(name)) %>') create<%= singular(classify(name)) %>: Create<%= singular(classify(name)) %>Input) {
         return this.<%= singular(lowercased(name)) %>Service.create(create<%= singular(classify(name)) %>);
     }
 
@@ -16,7 +16,7 @@ export class <%= singular(classify(name)) %>Resolver {
     }
 
     @Query(() => <%= singular(classify(name)) %>, {name: '<%= singular(name) %>', description: 'gets <%= classify(name) %> either by keys'})
-    findOne(@Args('get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>) {
+    findOne(@Args('get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>Input}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>Input) {
         return this.<%= singular(lowercased(name)) %>Service.findOne(get<%= singular(classify(name)) %>);
     }
 
@@ -27,7 +27,7 @@ export class <%= singular(classify(name)) %>Resolver {
 
     @Mutation(() => <%= singular(classify(name)) %>, {name: 'remove<%= singular(classify(name)) %>'})
     remove(
-    @Args('Get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>
+    @Args('Get<%= singular(classify(name)) %>', {type: () => Get<%= singular(classify(name)) %>Input}) get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>Input
     ) {
         return this.<%= singular(lowercased(name)) %>Service.remove(get<%= singular(classify(name)) %>);
     }
