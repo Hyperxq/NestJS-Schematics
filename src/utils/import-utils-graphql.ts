@@ -32,7 +32,6 @@ export function generateImports(fields: FieldMetadata[], forGraphQL = true, isIn
     addImport('class-validator', 'MaxLength');
   }
   if (fields.some((field) => field.type === AgnosticFieldType.STRING)) {
-    addImport('@nestjs/graphql', 'String');
     addImport('class-validator', 'IsString');
   }
   if (fields.some((field) => field.type === AgnosticFieldType.NUMBER)) {
