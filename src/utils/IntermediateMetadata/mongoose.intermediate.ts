@@ -1,64 +1,70 @@
+import { SchemaInfo } from '../../builder-generate/resource/resource.interfaces';
+import { AgnosticFieldType } from '../enums/agnostic-types.enum';
 import { FieldMetadata, SchemaMetadata } from '../interfaces/agnostic-data.interfaces';
 import { Intermediate } from '../interfaces/intermediate.interface';
-import { MongooseSchemaDefinitionField, MongooseSchemaField } from '../interfaces/mongoose-schema.interfaces';
+import { MongooseSchemaField } from '../interfaces/mongoose-schema.interfaces';
 
-export class MongooseIntermediate implements Intermediate<MongooseSchemaDefinitionField, SchemaMetadata> {
-  parseData(mongooseSchemas: MongooseSchemaDefinitionField[]): SchemaMetadata {
-    const fields: FieldMetadata[] = [];
+export class MongooseIntermediate implements Intermediate<SchemaInfo, SchemaMetadata[]> {
+  parseData(schemas: SchemaInfo[]): SchemaMetadata[] {
+    const schemaMetadataList: SchemaMetadata[] = [];
 
-    mongooseSchemas.forEach((schema) => {
-      Object.entries(schema).forEach(([fieldName, fieldDefinition]) => {
-        const parsedField = this.parseField(fieldName, fieldDefinition);
-        fields.push(parsedField);
+    schemas.forEach(({ properties, name, path, fileContent, skipIndexes }) => {
+      const fields: FieldMetadata[] = Object.entries(properties).map(([fieldName, fieldDefinition]) =>
+        this.parseField(fieldName, fieldDefinition),
+      );
+
+      schemaMetadataList.push({
+        name,
+        path,
+        fileContent,
+        skipIndexes,
+        fields,
+        relationships: [],
       });
     });
 
-    return {
-      name: '', // Dynamically set later if needed
-      fields,
-      relationships: [], // Keep an empty array for now
-    };
+    return schemaMetadataList;
   }
 
   private parseField(fieldName: string, fieldDefinition: MongooseSchemaField): FieldMetadata {
     return {
       name: fieldName,
       type: this.mapType(fieldDefinition.type),
-      isRequired: !!fieldDefinition.required,
+      isRequired: Boolean(fieldDefinition.required),
       defaultValue: fieldDefinition.default,
       isArray: Array.isArray(fieldDefinition.type),
       ref: null, // Explicitly set ref to null since relationships are ignored for now
       validations: this.extractValidations(fieldDefinition),
       isUnique: !!fieldDefinition.unique,
-      isIndexed: !!fieldDefinition.index,
+      isIndexed: !!fieldDefinition?.isIndex,
     };
   }
 
-  private mapType(type: any): string {
+  private mapType(type: any): AgnosticFieldType {
     if (Array.isArray(type)) {
-      return 'array';
+      return AgnosticFieldType.ARRAY;
     }
 
     switch (type) {
       case String:
       case 'String':
-        return 'string';
+        return AgnosticFieldType.STRING;
       case Number:
       case 'Number':
-        return 'number';
+        return AgnosticFieldType.NUMBER;
       case Boolean:
       case 'Boolean':
-        return 'boolean';
+        return AgnosticFieldType.BOOLEAN;
       case Date:
       case 'Date':
-        return 'date';
+        return AgnosticFieldType.DATE;
       case 'ObjectId':
       case 'Schema.Types.ObjectId':
-        return 'ObjectId';
+        return AgnosticFieldType.OBJECT_ID;
       case 'Map':
-        return 'map';
+        return AgnosticFieldType.MAP;
       default:
-        return 'unknown';
+        return AgnosticFieldType.UNKNOWN;
     }
   }
 

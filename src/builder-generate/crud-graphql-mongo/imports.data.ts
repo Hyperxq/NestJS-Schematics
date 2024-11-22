@@ -10,11 +10,11 @@ export const serviceImportsData = (nameSinglularClassify: string, nameSinglularD
     moduleSpecifier: `./entities/${nameSinglularDasherize}.entity`,
   },
   {
-    identifiers: [`Create${nameSinglularClassify}`],
+    identifiers: [`Create${nameSinglularClassify}Input`],
     moduleSpecifier: `./dto/create-${nameSinglularDasherize}.input.dto`,
   },
   {
-    identifiers: [`Get${nameSinglularClassify}`],
+    identifiers: [`Get${nameSinglularClassify}Input`],
     moduleSpecifier: `./dto/get-${nameSinglularDasherize}.input.dto`,
   },
   {
@@ -33,11 +33,11 @@ export const resolverImportsData = (nameSinglularClassify: string, nameSinglular
     moduleSpecifier: `./entities/${nameSinglularDasherize}.entity`,
   },
   {
-    identifiers: [`Create${nameSinglularClassify}`],
+    identifiers: [`Create${nameSinglularClassify}Input`],
     moduleSpecifier: `./dto/create-${nameSinglularDasherize}.input.dto`,
   },
   {
-    identifiers: [`Get${nameSinglularClassify}`],
+    identifiers: [`Get${nameSinglularClassify}Input`],
     moduleSpecifier: `./dto/get-${nameSinglularDasherize}.input.dto`,
   },
   {

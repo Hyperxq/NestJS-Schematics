@@ -4,11 +4,12 @@ import { generateImports } from '../../import-utils-graphql';
 import { FieldMetadata, SchemaMetadata } from '../../interfaces/agnostic-data.interfaces';
 import { ContentResult, IPropertyFactory } from '../../interfaces/property-factory.interfaces';
 
-export class EntityFactory implements IPropertyFactory {
+export class UpdateDTOFactory implements IPropertyFactory {
   generate(schemaMetadata: SchemaMetadata[]): ContentResult[] {
     return schemaMetadata.map(({ fields, name, path }) => {
-      const imports = generateImports(fields, true); // Generate GraphQL-specific imports
-      const content = this.generateFields(fields);
+      const modifiedFields = this.makeFieldsOptional(fields);
+      const imports = generateImports(modifiedFields);
+      const content = this.generateFields(modifiedFields);
 
       return {
         name,
@@ -17,6 +18,16 @@ export class EntityFactory implements IPropertyFactory {
         imports,
       };
     });
+  }
+
+  /**
+   * Ensures all fields are optional for update DTOs.
+   */
+  private makeFieldsOptional(fields: FieldMetadata[]): FieldMetadata[] {
+    return fields.map((field) => ({
+      ...field,
+      isRequired: false, // Set all fields to optional
+    }));
   }
 
   /**
@@ -38,10 +49,10 @@ export class EntityFactory implements IPropertyFactory {
   private generateFieldDecorators(field: FieldMetadata): string {
     const decorators = [];
 
-    // Add GraphQL Field decorator
-    decorators.push(`@Field(() => ${mapGraphQLType(field.type)}, { nullable: ${!field.isRequired} })`);
+    // GraphQL Field decorator
+    decorators.push(`@Field(() => ${mapGraphQLType(field.type)}, { nullable: true })`);
 
-    // Add class-validator decorators based on validations
+    // Class-validator decorators
     if (field.validations?.min !== undefined) {
       decorators.push(`@Min(${field.validations.min})`);
     }
@@ -54,23 +65,17 @@ export class EntityFactory implements IPropertyFactory {
     if (field.validations?.max !== undefined) {
       decorators.push(`@MaxLength(${field.validations.max})`);
     }
-
-    // Type-specific class-validator decorators
-    switch (field.type) {
-      case AgnosticFieldType.STRING:
-        decorators.push(`@IsString()`);
-        break;
-      case AgnosticFieldType.NUMBER:
-        decorators.push(`@IsInt()`);
-        break;
-      case AgnosticFieldType.BOOLEAN:
-        decorators.push(`@IsBoolean()`);
-        break;
-      case AgnosticFieldType.DATE:
-        decorators.push(`@IsDate()`);
-        break;
-      default:
-        break;
+    if (field.type === AgnosticFieldType.STRING) {
+      decorators.push(`@IsString()`);
+    }
+    if (field.type === AgnosticFieldType.NUMBER) {
+      decorators.push(`@IsInt()`);
+    }
+    if (field.type === AgnosticFieldType.BOOLEAN) {
+      decorators.push(`@IsBoolean()`);
+    }
+    if (field.type === AgnosticFieldType.DATE) {
+      decorators.push(`@IsDate()`);
     }
 
     return decorators.join('\n  ');

@@ -2,8 +2,7 @@ import { OutputType } from '../enums/output-types.enum';
 import { SourceType } from '../enums/source-types.enum';
 import { SchemaMetadata } from '../interfaces/agnostic-data.interfaces';
 import { Intermediate } from '../interfaces/intermediate.interface';
-import { MongooseSchemaDefinition } from '../interfaces/mongoose-schema.interfaces';
-import { IFactorySet } from '../interfaces/property-factory.interfaces';
+import { ContentResult, IFactorySet } from '../interfaces/property-factory.interfaces';
 import { SourceSpecificProperties } from '../interfaces/source-specific-properties.type';
 import { IntermediateFactory } from './intermediate-factory';
 import { OutputSetFactory } from './output-set-factory';
@@ -15,24 +14,24 @@ export class MainFactory<T extends SourceType> {
   private sourceType: SourceType;
   private outputType: OutputType;
   private factorySet: IFactorySet;
-  private intermediate: Intermediate<SourceSpecificProperties[T], SchemaMetadata>;
-  private properties: SchemaMetadata;
+  private intermediate: Intermediate<SourceSpecificProperties[T], SchemaMetadata[]>;
+  private elements: SchemaMetadata[];
 
   constructor(sourceType: SourceType, outputType: OutputType, properties: SourceSpecificProperties[T]) {
     this.sourceType = sourceType;
     this.outputType = outputType;
     this.factorySet = OutputSetFactory.createFactorySet(this.outputType);
     this.intermediate = IntermediateFactory.createFactory(this.sourceType);
-    this.properties = this.intermediate.parseData(properties);
+    this.elements = this.intermediate.parseData(properties);
   }
 
   /**
    * Generates a GetDTO using the GetDTOFactory.
    * @param properties - The properties to generate the GetDTO from.
-   * @returns A string representing the generated GetDTO.
+   * @returns A ContentResult[] representing the generated GetDTO.
    */
-  generateGetDTO(): string {
-    return this.factorySet.getGetDTOFactory().generate(this.properties);
+  generateGetDTO(): ContentResult[] {
+    return this.factorySet.getGetDTOFactory().generate(this.elements);
   }
 
   /**
@@ -40,8 +39,8 @@ export class MainFactory<T extends SourceType> {
    * @param properties - The properties to generate the CreateDTO from.
    * @returns A string representing the generated CreateDTO.
    */
-  generateCreateDTO(): string {
-    return this.factorySet.getCreateDTOFactory().generate(this.properties);
+  generateCreateDTO(): ContentResult[] {
+    return this.factorySet.getCreateDTOFactory().generate(this.elements);
   }
 
   /**
@@ -49,8 +48,8 @@ export class MainFactory<T extends SourceType> {
    * @param properties - The properties to generate the UpdateDTO from.
    * @returns A string representing the generated UpdateDTO.
    */
-  generateUpdateDTO(): string {
-    return this.factorySet.getUpdateDTOFactory().generate(this.properties);
+  generateUpdateDTO(): ContentResult[] {
+    return this.factorySet.getUpdateDTOFactory().generate(this.elements);
   }
 
   /**
@@ -58,8 +57,8 @@ export class MainFactory<T extends SourceType> {
    * @param properties - The properties to generate the Schema from.
    * @returns A string representing the generated Schema.
    */
-  generateSchema(): string {
-    return this.factorySet.getSchemaFactory().generate(this.properties);
+  generateSchema(): ContentResult[] {
+    return this.factorySet.getSchemaFactory().generate(this.elements);
   }
 
   /**
@@ -67,7 +66,7 @@ export class MainFactory<T extends SourceType> {
    * @param properties - The properties to generate the Entity from.
    * @returns A string representing the generated Entity.
    */
-  generateEntity(): string {
-    return this.factorySet.getEntityFactory().generate(this.properties);
+  generateEntity(): ContentResult[] {
+    return this.factorySet.getEntityFactory().generate(this.elements);
   }
 }

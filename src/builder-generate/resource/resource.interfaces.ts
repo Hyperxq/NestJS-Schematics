@@ -17,6 +17,7 @@ export interface SchemaInfo {
   properties: MongooseSchemaDefinition;
   skipIndexes: boolean;
   fileContent: string;
+  mainSchema?: boolean;
 }
 
 export interface Properties {

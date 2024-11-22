@@ -127,7 +127,7 @@ interface MapSchemaTypeOptions {
 /**
  * Interface for Mongoose Schema Types for a Field.
  */
-export type MongooseSchemaField =
+export type MongooseSchemaField = { isIndex?: boolean } & (
   | StringSchemaTypeOptions
   | NumberSchemaTypeOptions
   | DateSchemaTypeOptions
@@ -135,7 +135,8 @@ export type MongooseSchemaField =
   | ObjectIdSchemaTypeOptions
   | ArraySchemaTypeOptions
   | MapSchemaTypeOptions
-  | SchemaTypeOptions; // Generic type for other possible schema options
+  | SchemaTypeOptions
+); // Generic type for other possible schema options
 
 /**
  * Interface representing a Mongoose Schema Definition for a single field.

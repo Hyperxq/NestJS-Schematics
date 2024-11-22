@@ -45,6 +45,7 @@ export async function loadAndParseSchema(
       name: schemaName.replace('Schema', '').toLowerCase(),
       fileContent: schema.fileContent,
       properties,
+      mainSchema: true,
       // properties: propertiesUpdated,
       skipIndexes,
     },
@@ -71,24 +72,31 @@ async function getPropertiesFromSchema(schema: Schema, askIndexNotFound = true) 
   // const properties: { [key: string]: { [key: string]: any } } = extractProperties(fileContent!, schema.schemaName);
 
   // const indexes = extractIndexes(fileContent!, schemaName) ?? [];
-  let skipIndexes = false;
+  let useAllFieldsAsKeys = false;
   if (!indexes || indexes.length === 0) {
     if (askIndexNotFound) {
       console.log(colors.bold(colors.yellow('Indexes not found. Get dto uses indexes for its fields')));
-      skipIndexes = await AskForNotIndexesQuestion();
+      useAllFieldsAsKeys = await AskForNotIndexesQuestion();
     } else {
-      skipIndexes = true;
+      useAllFieldsAsKeys = true;
     }
   }
-  for (const index of indexes) {
-    properties[index].isIndex = true;
+
+  let keys = indexes;
+
+  if (useAllFieldsAsKeys) {
+    keys = Object.keys(properties);
+  }
+
+  for (const key of keys) {
+    properties[key].isIndex = true;
   }
 
   return {
     path,
     schemaName,
     properties,
-    skipIndexes,
+    skipIndexes: useAllFieldsAsKeys,
   };
 }
 

@@ -2,6 +2,13 @@
 
 import { SchemaMetadata } from './agnostic-data.interfaces';
 
+export interface ContentResult {
+  name: string;
+  path: string;
+  content: string;
+  imports: string;
+}
+
 /**
  * The shared interface that all property factories (e.g., GetDTO, CreateDTO, Entity) will implement.
  */
@@ -11,11 +18,11 @@ export interface IPropertyFactory {
    * @param properties - The properties to generate content from.
    * @returns A string representing the generated content (e.g., TypeScript class definition).
    */
-  generate(properties: SchemaMetadata): string;
+  generate(properties: SchemaMetadata[]): ContentResult[];
 }
 
 export interface IFactory {
-  generate(properties: SchemaMetadata): string;
+  generate(properties: SchemaMetadata[]): ContentResult[];
 }
 
 export interface IFactorySet {

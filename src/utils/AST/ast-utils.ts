@@ -4,6 +4,7 @@ import {
   Node,
   ObjectLiteralExpression,
   SourceFile,
+  SyntaxKind,
   isArrayLiteralExpression,
   isCallExpression,
   isIdentifier,
@@ -47,6 +48,10 @@ export function extractPropertyOptions(
 export function getValueFromNode(node: Expression, sourceFile: SourceFile): any {
   if (isStringLiteral(node)) {
     return node.text;
+  } else if (node.kind === SyntaxKind.TrueKeyword) {
+    return true;
+  } else if (node.kind === SyntaxKind.FalseKeyword) {
+    return false;
   } else if (isNumericLiteral(node)) {
     return Number(node.text);
   } else if (isArrayLiteralExpression(node)) {

@@ -1,0 +1,6 @@
+<%= imports %>
+
+@ObjectType()
+export class <%= singular(classify(name)) %> {
+<%= content %>
+}

@@ -2,7 +2,6 @@ import { MongooseIntermediate } from '../IntermediateMetadata/mongoose.intermedi
 import { SourceType } from '../enums/source-types.enum';
 import { SchemaMetadata } from '../interfaces/agnostic-data.interfaces';
 import { Intermediate } from '../interfaces/intermediate.interface';
-import { MongooseSchemaDefinition } from '../interfaces/mongoose-schema.interfaces';
 import { SourceSpecificProperties } from '../interfaces/source-specific-properties.type';
 
 /**
@@ -11,7 +10,7 @@ import { SourceSpecificProperties } from '../interfaces/source-specific-properti
 export class IntermediateFactory {
   static createFactory<T extends SourceType>(
     inputType: SourceType,
-  ): Intermediate<SourceSpecificProperties[T], SchemaMetadata> {
+  ): Intermediate<SourceSpecificProperties[T], SchemaMetadata[]> {
     switch (inputType) {
       case SourceType.MongooseSchema:
         return new MongooseIntermediate();

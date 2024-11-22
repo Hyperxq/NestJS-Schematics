@@ -1,0 +1,6 @@
+<%= imports %>
+
+@InputType()
+export class Create<%= singular(classify(name)) %>Input {
+<%= content %>
+}

@@ -1,6 +1,8 @@
+import { AgnosticFieldType } from '../enums/agnostic-types.enum';
+
 export interface FieldMetadata {
   name: string; // The name of the field
-  type: string; // The type of the field (e.g., "string", "number", "boolean")
+  type: AgnosticFieldType; // The type of the field (e.g., "string", "number", "boolean")
   isRequired?: boolean; // Whether the field is required
   defaultValue?: any; // The default value of the field, if any
   validations?: {
@@ -24,6 +26,9 @@ export interface RelationshipMetadata {
 
 export interface SchemaMetadata {
   name: string; // The name of the schema or entity
+  path: string;
+  skipIndexes: boolean;
+  fileContent: string;
   fields: FieldMetadata[]; // A list of fields in the schema
   relationships: RelationshipMetadata[]; // A list of relationships in the schema
 }

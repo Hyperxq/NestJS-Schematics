@@ -1,0 +1,16 @@
+<%= imports %>
+import {Get<%= singular(classify(name)) %>Input} from './get-<%= singular(dasherize(name)) %>.input.dto';
+
+@InputType()
+export class Update<%= singular(classify(name)) %>Payload {
+<%= content %>
+}
+
+@InputType()
+export class Update<%= singular(classify(name)) %>Args {
+    @Field(() => Get<%= singular(classify(name)) %>Input)
+    query: Get<%= singular(classify(name)) %>Input;
+
+    @Field(() => Update<%= singular(classify(name)) %>Payload)
+    payload: Update<%= singular(classify(name)) %>Payload;
+}

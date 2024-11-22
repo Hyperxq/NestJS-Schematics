@@ -11,10 +11,11 @@ import {
   isPropertyAssignment,
   isVariableDeclaration,
 } from 'typescript';
+import { MongooseSchemaField } from '../../interfaces/mongoose-schema.interfaces';
 import { getValueFromNode, traverseAST } from '../ast-utils';
 
 interface SchemaParseResult {
-  properties: Record<string, any>;
+  properties: Record<string, MongooseSchemaField>;
   indexes: string[];
 }
 
@@ -26,7 +27,7 @@ interface SchemaParseResult {
  */
 export function parseMongooseSchemaFromContent(schemaFileContent: string): SchemaParseResult {
   const sourceFile: SourceFile = createSourceFile('schema.ts', schemaFileContent, ScriptTarget.Latest, true);
-  const properties: Record<string, any> = {};
+  const properties: Record<string, MongooseSchemaField> = {};
   const indexes: string[] = [];
 
   /**

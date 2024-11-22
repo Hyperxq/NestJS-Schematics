@@ -17,6 +17,7 @@ import { addShortImportToTsConfig } from '../../utils/AST';
 import { OutputType } from '../../utils/enums/output-types.enum';
 import { SourceType } from '../../utils/enums/source-types.enum';
 import { MainFactory } from '../../utils/factories/main-factory';
+import { ContentResult } from '../../utils/interfaces/property-factory.interfaces';
 import { SchematicOptions } from './crud-graphql-mongo.schema';
 import { moduleImportsData, repositoryImportData, resolverImportsData, serviceImportsData } from './imports.data';
 import { moduleProvidersData } from './providers.data';
@@ -47,21 +48,61 @@ export function crudGraphqlMongoFactory(options: SchematicOptions) {
     const schemas = await loadAndParseSchema(options, tree, context);
     const rules: Rule[] = [];
     // Send all the properties and info.
-    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL, []);
-    schemas.forEach(({ name, properties, path }) => {
-      // TODO: for now we will generate entities in the simple way, we need to support all the types of properties.
-      console.log('properties', properties);
+    // We need to send  all the properties per schema with name and path.
 
-      rules.push(addCommonFiles({ sourceRoot: options.sourceRoot }));
-      rules.push(addRepository({ name, sourceRoot: path }));
-      rules.push(addService({ name, sourceRoot: path }));
-      rules.push(addResolver({ name, sourceRoot: path }));
-      rules.push(addModule({ name, sourceRoot: path }));
-      rules.push(addDeclarationToModule({ name, sourceRoot: path }));
+    // TODO: for now we will generate entities in the simple way, we need to support all the types of properties.
+    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL, schemas);
+
+    schemas
+      .filter(({ mainSchema }) => mainSchema)
+      .forEach(({ name, path }) => {
+        rules.push(addCommonFiles({ sourceRoot: options.sourceRoot }));
+        rules.push(addRepository({ name, sourceRoot: path }));
+        rules.push(addService({ name, sourceRoot: path }));
+        rules.push(addResolver({ name, sourceRoot: path }));
+        rules.push(addModule({ name, sourceRoot: path }));
+        rules.push(addDeclarationToModule({ name, sourceRoot: path }));
+      });
+
+    const getDTOs: ContentResult[] = factory.generateGetDTO();
+    const createDTOs: ContentResult[] = factory.generateCreateDTO();
+    const updateDTOs: ContentResult[] = factory.generateUpdateDTO();
+    const entities: ContentResult[] = factory.generateEntity();
+
+    getDTOs.forEach((contentResult) => {
+      rules.push(addDTO(contentResult, 'GET'));
+    });
+    createDTOs.forEach((contentResult) => {
+      rules.push(addDTO(contentResult, 'CREATE'));
+    });
+    updateDTOs.forEach((contentResult) => {
+      rules.push(addDTO(contentResult, 'UPDATE'));
+    });
+    entities.forEach((contentResult) => {
+      rules.push(addEntity(contentResult));
     });
 
     return chain(rules);
   };
+}
+
+function addEntity({ name, content, path, imports }: ContentResult): Rule {
+  return addFilesToTree(
+    { name, content, imports },
+    `${path}`,
+    ['__name@singular@dasherize@ent__.ts.template'],
+    './files',
+  );
+}
+
+function addDTO({ name, content, path, imports }: ContentResult, dtoType: 'GET' | 'UPDATE' | 'CREATE'): Rule {
+  const DTOMap = {
+    GET: 'get-__name@singular@dasherize__.input.dto.ts.template',
+    CREATE: 'create-__name@singular@dasherize__.input.dto.ts.template',
+    UPDATE: 'update-__name@singular@dasherize__.input.dto.ts.template',
+  };
+
+  return addFilesToTree({ name, content, imports }, `${path}`, [DTOMap[dtoType]], './files');
 }
 
 function addRepository({ name, sourceRoot }: Pick<SchematicOptions, 'sourceRoot' | 'name'>) {
