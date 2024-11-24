@@ -28,7 +28,7 @@ export function installDependenciesFactory({ packageManager, kind }: { packageMa
     try {
       await spawnAsync(
         packageManager,
-        [packageManagerCommands[packageManager], `${installationChoose[kind]} --save-dev --save-exact prettier`],
+        [packageManagerCommands[packageManager], ` ${installationChoose[kind]} --save-dev --save-exact prettier`],
         {
           cwd: process.cwd(),
           stdio: 'inherit',

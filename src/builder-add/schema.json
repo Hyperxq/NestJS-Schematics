@@ -14,7 +14,7 @@
                 "cnpm",
                 "bun"
             ],
-            "default": "npm"
+            "default": "pnpm"
         },
         "skipInstall": {
             "type": "boolean",
