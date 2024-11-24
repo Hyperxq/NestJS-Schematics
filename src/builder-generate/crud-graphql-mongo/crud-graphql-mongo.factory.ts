@@ -162,7 +162,7 @@ function addCommonFiles({ sourceRoot }: Pick<SchematicOptions, 'sourceRoot'>) {
     return addFilesToTree(
       {},
       `${sourceRoot}`,
-      ['abstract.repository.ts.template', 'database.module.ts.template'],
+      ['abstract.repository.ts.template', 'database.module.ts.template', 'index.ts.template'],
       './files/single-project',
     );
   };

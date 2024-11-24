@@ -1,3 +1,4 @@
+# Development stage
 FROM node:18.16.1-slim as development
 
 WORKDIR /usr/src/app
@@ -10,6 +11,7 @@ COPY . .
 
 RUN npm run build
 
+# Production stage
 FROM node:18.16.1-slim as production
 
 WORKDIR /usr/src/app
@@ -18,8 +20,7 @@ COPY package*.json ./
 
 RUN npm install --only=production
 
-COPY . .
+# Copy build output from development
+COPY --from=development /usr/src/app/dist /usr/src/app/dist
 
-COPY --from=development /usr/src/app/dist .
-
-CMD ["node", "main.js"]
+CMD ["node", "dist/main.js"]

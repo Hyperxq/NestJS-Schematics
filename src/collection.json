@@ -23,7 +23,7 @@
       ]
     },
     "crud-graphql-mongo": {
-      "description": "This is an empty schematic",
+      "description": "Generate a resource with graphql and mongo",
       "factory": "./builder-generate/crud-graphql-mongo/crud-graphql-mongo.factory#crudGraphqlMongoFactory",
       "schema": "./builder-generate/crud-graphql-mongo/schema.json",
       "aliases": [
