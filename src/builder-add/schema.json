@@ -4,6 +4,18 @@
     "title": "Builder Add",
     "type": "object",
     "properties": {
+        "packageManager": {
+            "description": "The package manager used to install dependencies.",
+            "type": "string",
+            "enum": [
+                "npm",
+                "yarn",
+                "pnpm",
+                "cnpm",
+                "bun"
+            ],
+            "default": "npm"
+        },
         "skipInstall": {
             "type": "boolean",
             "description": "Skip the installation of the dependencies",

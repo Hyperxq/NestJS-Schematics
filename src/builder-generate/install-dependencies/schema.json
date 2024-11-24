@@ -3,5 +3,26 @@
     "$id": "install-dependencies",
     "title": "a custom schematic ",
     "type": "object",
-    "properties": {}
+    "properties": {
+        "packageManager": {
+            "description": "The package manager used to install dependencies.",
+            "type": "string",
+            "enum": [
+                "npm",
+                "yarn",
+                "pnpm",
+                "cnpm",
+                "bun"
+            ],
+            "default": "npm"
+        },
+        "kind": {
+            "type": "string",
+            "enum": [
+                "GraphQL-Mongoose"
+            ],
+            "default": "GraphQL-Mongoose",
+            "x-prompt": "Which installation kind do you want?"
+        }
+    }
 }

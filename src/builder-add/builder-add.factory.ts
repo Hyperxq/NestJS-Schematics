@@ -6,10 +6,20 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Rule } from '@angular-devkit/schematics';
+import { Rule, chain, schematic } from '@angular-devkit/schematics';
 
-export function builderAddFactory(): Rule {
+export function builderAddFactory({
+  skipPreparation,
+  packageManager,
+}: {
+  skipPreparation: boolean;
+  packageManager: string;
+}): Rule {
   return () => {
-    console.info('This schematics will be executed when user executes builder add [collection-name]');
+    if (skipPreparation) {
+      return;
+    }
+
+    return chain([schematic('prepare-env', {}), schematic('install-dependencies', { kind: 'GraphQL-Mongoose' })]);
   };
 }
