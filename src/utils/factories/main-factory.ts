@@ -1,10 +1,13 @@
+import { Tree } from '@angular-devkit/schematics';
 import { OutputType } from '../enums/output-types.enum';
 import { SourceType } from '../enums/source-types.enum';
 import { SchemaMetadata } from '../interfaces/agnostic-data.interfaces';
 import { Intermediate } from '../interfaces/intermediate.interface';
+import { Loader } from '../interfaces/loader.interface';
 import { ContentResult, IFactorySet } from '../interfaces/property-factory.interfaces';
 import { SourceSpecificProperties } from '../interfaces/source-specific-properties.type';
 import { IntermediateFactory } from './intermediate-factory';
+import { LoaderFactory } from './loader-factory';
 import { OutputSetFactory } from './output-set-factory';
 
 /**
@@ -16,12 +19,22 @@ export class MainFactory<T extends SourceType> {
   private factorySet: IFactorySet;
   private intermediate: Intermediate<SourceSpecificProperties[T], SchemaMetadata[]>;
   private elements: SchemaMetadata[];
+  private loader: Loader<SourceSpecificProperties[T]>;
 
-  constructor(sourceType: SourceType, outputType: OutputType, properties: SourceSpecificProperties[T]) {
+  constructor(
+    sourceType: SourceType,
+    outputType: OutputType,
+    properties: SourceSpecificProperties[T],
+    sourceRoot: string,
+    tree: Tree,
+  ) {
     this.sourceType = sourceType;
     this.outputType = outputType;
     this.factorySet = OutputSetFactory.createFactorySet(this.outputType);
+    this.loader = LoaderFactory.createFactory(this.sourceType);
     this.intermediate = IntermediateFactory.createFactory(this.sourceType);
+
+    this.loader.getData(tree, sourceRoot);
     this.elements = this.intermediate.parseData(properties);
   }
 

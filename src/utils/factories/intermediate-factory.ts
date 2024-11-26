@@ -1,8 +1,6 @@
-import { MongooseIntermediate } from '../IntermediateMetadata/mongoose.intermediate';
+import { MongooseIntermediate } from '../IntermediateMetadata';
 import { SourceType } from '../enums/source-types.enum';
-import { SchemaMetadata } from '../interfaces/agnostic-data.interfaces';
-import { Intermediate } from '../interfaces/intermediate.interface';
-import { SourceSpecificProperties } from '../interfaces/source-specific-properties.type';
+import { Intermediate, SchemaMetadata, SourceSpecificProperties } from '../interfaces';
 
 /**
  * A factory that creates and returns a set of Intermediate factories based on the source type.

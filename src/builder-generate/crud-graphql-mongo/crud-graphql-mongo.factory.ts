@@ -51,12 +51,12 @@ export function crudGraphqlMongoFactory(options: SchematicOptions) {
     // We need to send  all the properties per schema with name and path.
 
     // TODO: for now we will generate entities in the simple way, we need to support all the types of properties.
-    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL, schemas);
+    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL, schemas, options.sourceRoot, tree);
 
+    rules.push(addCommonFiles({ sourceRoot: options.sourceRoot }));
     schemas
       .filter(({ mainSchema }) => mainSchema)
       .forEach(({ name, path }) => {
-        rules.push(addCommonFiles({ sourceRoot: options.sourceRoot }));
         rules.push(addRepository({ name, sourceRoot: path }));
         rules.push(addService({ name, sourceRoot: path }));
         rules.push(addResolver({ name, sourceRoot: path }));
