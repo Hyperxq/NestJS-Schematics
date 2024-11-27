@@ -16,8 +16,6 @@ export class MongooseLoader implements Loader<SchemaInfo[]> {
   async getData(tree: Tree, sourceRoot: string): Promise<SchemaInfo[]> {
     const schemas = this.getSchemas(tree, sourceRoot);
 
-    console.log(schemas);
-
     if (schemas.length === 0) {
       throw new SchematicsException('No schemas were found.');
     }
@@ -63,8 +61,6 @@ export class MongooseLoader implements Loader<SchemaInfo[]> {
     sourceRoot: string,
   ): ReadonlyArray<{ path: string; schemaName: string; fileContent: string }> {
     const schemaFiles = this.traverseDirectories(tree, sourceRoot);
-
-    console.log(schemaFiles);
 
     return schemaFiles.flatMap(({ path, fileName }) => {
       const filePath = `${path}/schemas/${fileName}`;
