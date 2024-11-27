@@ -4,17 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 <%= imports %>
 
 @Module({
-    providers: [<%= providers %>],
-    controllers: [<%= controllers %>],
-    imports: [
-        DatabaseModule,
-        MongooseModule.forFeature([
-            {
-                name: <%= name %>.name,
-                schema: <%= name %>Schema,
-                collection: '<%= camelize(plural(name)) %>',
-            },
-        ]),
-    ],
+    <%= content %>
 })
 export class <%= classify(name) %>Module {}

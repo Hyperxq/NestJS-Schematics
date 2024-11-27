@@ -1,4 +1,4 @@
-export * from './graphql-factory-set';
+export * from './graphql-mongo-factory-set';
 export * from './graphql/create-dto-factory';
 export * from './graphql/entity-factory';
 export * from './graphql/get-dto-factory';

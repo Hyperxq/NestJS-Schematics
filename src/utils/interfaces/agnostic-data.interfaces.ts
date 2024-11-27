@@ -29,6 +29,7 @@ export interface SchemaMetadata {
   path: string;
   skipIndexes: boolean;
   fileContent: string;
+  mainElement?: boolean;
   fields: FieldMetadata[]; // A list of fields in the schema
   relationships: RelationshipMetadata[]; // A list of relationships in the schema
 }

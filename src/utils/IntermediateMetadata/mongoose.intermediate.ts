@@ -8,7 +8,7 @@ export class MongooseIntermediate implements Intermediate<SchemaInfo, SchemaMeta
   parseData(schemas: SchemaInfo[]): SchemaMetadata[] {
     const schemaMetadataList: SchemaMetadata[] = [];
 
-    schemas.forEach(({ properties, name, path, fileContent, skipIndexes }) => {
+    schemas.forEach(({ properties, name, path, fileContent, skipIndexes, mainSchema }) => {
       const fields: FieldMetadata[] = Object.entries(properties).map(([fieldName, fieldDefinition]) =>
         this.parseField(fieldName, fieldDefinition),
       );
@@ -17,6 +17,7 @@ export class MongooseIntermediate implements Intermediate<SchemaInfo, SchemaMeta
         name,
         path,
         fileContent,
+        mainElement: Boolean(mainSchema),
         skipIndexes,
         fields,
         relationships: [],

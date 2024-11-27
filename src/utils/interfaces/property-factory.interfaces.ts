@@ -31,4 +31,8 @@ export interface IFactorySet {
   getUpdateDTOFactory(): IFactory;
   getGetDTOFactory(): IFactory;
   getSchemaFactory(): IFactory;
+  repositoryFactory(): IFactory;
+  serviceFactory(): IFactory;
+  resolverFactory(): IFactory;
+  moduleFactory(): IFactory;
 }

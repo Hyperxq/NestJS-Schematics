@@ -63,6 +63,7 @@ const baseExternal = [
   'json5',
   'jsonc-parser',
   'jsonc-parser',
+  'mongoose',
   'node-emoji',
   'node:module',
   'ora',

@@ -1,8 +1,5 @@
-import { MongooseIntermediate } from '../IntermediateMetadata/mongoose.intermediate';
 import { MongooseLoader } from '../Loaders';
 import { SourceType } from '../enums/source-types.enum';
-import { SchemaMetadata } from '../interfaces/agnostic-data.interfaces';
-import { Intermediate } from '../interfaces/intermediate.interface';
 import { Loader } from '../interfaces/loader.interface';
 import { SourceSpecificProperties } from '../interfaces/source-specific-properties.type';
 

@@ -21,21 +21,17 @@ export class MainFactory<T extends SourceType> {
   private elements: SchemaMetadata[];
   private loader: Loader<SourceSpecificProperties[T]>;
 
-  constructor(
-    sourceType: SourceType,
-    outputType: OutputType,
-    properties: SourceSpecificProperties[T],
-    sourceRoot: string,
-    tree: Tree,
-  ) {
+  constructor(sourceType: SourceType, outputType: OutputType) {
     this.sourceType = sourceType;
     this.outputType = outputType;
     this.factorySet = OutputSetFactory.createFactorySet(this.outputType);
     this.loader = LoaderFactory.createFactory(this.sourceType);
     this.intermediate = IntermediateFactory.createFactory(this.sourceType);
+  }
 
-    this.loader.getData(tree, sourceRoot);
-    this.elements = this.intermediate.parseData(properties);
+  async loadData(sourceRoot: string, tree: Tree) {
+    const properties = this.loader.getData(tree, sourceRoot);
+    this.elements = this.intermediate.parseData(await properties);
   }
 
   /**
@@ -81,5 +77,21 @@ export class MainFactory<T extends SourceType> {
    */
   generateEntity(): ContentResult[] {
     return this.factorySet.getEntityFactory().generate(this.elements);
+  }
+
+  generateResolver(): ContentResult[] {
+    return this.factorySet.resolverFactory().generate(this.elements);
+  }
+
+  generateService(): ContentResult[] {
+    return this.factorySet.serviceFactory().generate(this.elements);
+  }
+
+  generateRepository(): ContentResult[] {
+    return this.factorySet.repositoryFactory().generate(this.elements);
+  }
+
+  generateModule(): ContentResult[] {
+    return this.factorySet.moduleFactory().generate(this.elements);
   }
 }

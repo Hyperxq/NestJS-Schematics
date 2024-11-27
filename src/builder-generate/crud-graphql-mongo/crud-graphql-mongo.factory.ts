@@ -1,26 +1,12 @@
-import { join, normalize } from '@angular-devkit/core';
-import { Rule, SchematicContext, SchematicsException, Tree, chain, strings } from '@angular-devkit/schematics';
-import * as pluralize from 'pluralize';
-import { ImportDeclaration } from 'typescript';
-import {
-  addDeclarationToModule,
-  addFilesToTree,
-  createImportStatement,
-  createImportsStatement,
-  getImportAsText,
-  getImportsAsText,
-  getRelativePath,
-  getSourceRoot,
-  loadAndParseSchema,
-} from '../../utils';
+import { normalize } from '@angular-devkit/core';
+import { Rule, SchematicsException, Tree, chain } from '@angular-devkit/schematics';
+import { addDeclarationToModule, addFilesToTree, getRelativePath, getSourceRoot } from '../../utils';
 import { addShortImportToTsConfig } from '../../utils/AST';
 import { OutputType } from '../../utils/enums/output-types.enum';
 import { SourceType } from '../../utils/enums/source-types.enum';
 import { MainFactory } from '../../utils/factories/main-factory';
 import { ContentResult } from '../../utils/interfaces/property-factory.interfaces';
 import { SchematicOptions } from './crud-graphql-mongo.schema';
-import { moduleImportsData, repositoryImportData, resolverImportsData, serviceImportsData } from './imports.data';
-import { moduleProvidersData } from './providers.data';
 
 export function crudGraphqlMongoFactory(options: SchematicOptions) {
   /*
@@ -35,7 +21,7 @@ export function crudGraphqlMongoFactory(options: SchematicOptions) {
    * 8. addDeclarationToModule
    */
   // * When we add a new file, we need to pass a complex object that allows to everyfile has the logic.
-  return async (tree: Tree, context: SchematicContext) => {
+  return async (tree: Tree) => {
     const relativePath = getRelativePath(process.cwd());
     if (relativePath === '/') {
       if (!options.sourceRoot) {
@@ -45,29 +31,39 @@ export function crudGraphqlMongoFactory(options: SchematicOptions) {
       options.sourceRoot = '/';
     }
 
-    const schemas = await loadAndParseSchema(options, tree, context);
     const rules: Rule[] = [];
-    // Send all the properties and info.
-    // We need to send  all the properties per schema with name and path.
 
-    // TODO: for now we will generate entities in the simple way, we need to support all the types of properties.
-    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL, schemas, options.sourceRoot, tree);
+    const factory = new MainFactory(SourceType.MongooseSchema, OutputType.GRAPHQL);
+    await factory.loadData(options.sourceRoot, tree);
 
     rules.push(addCommonFiles({ sourceRoot: options.sourceRoot }));
-    schemas
-      .filter(({ mainSchema }) => mainSchema)
-      .forEach(({ name, path }) => {
-        rules.push(addRepository({ name, sourceRoot: path }));
-        rules.push(addService({ name, sourceRoot: path }));
-        rules.push(addResolver({ name, sourceRoot: path }));
-        rules.push(addModule({ name, sourceRoot: path }));
-        rules.push(addDeclarationToModule({ name, sourceRoot: path }));
-      });
 
     const getDTOs: ContentResult[] = factory.generateGetDTO();
     const createDTOs: ContentResult[] = factory.generateCreateDTO();
     const updateDTOs: ContentResult[] = factory.generateUpdateDTO();
     const entities: ContentResult[] = factory.generateEntity();
+    const resolvers: ContentResult[] = factory.generateResolver();
+    const services: ContentResult[] = factory.generateService();
+    const modules: ContentResult[] = factory.generateModule();
+    const repositories: ContentResult[] = factory.generateRepository();
+
+    const sourceRoot = options.sourceRoot;
+
+    resolvers.forEach((contentResult) => {
+      rules.push(addResolver({ sourceRoot, contentResult }));
+    });
+    services.forEach((contentResult) => {
+      rules.push(addService({ sourceRoot, contentResult }));
+    });
+
+    modules.forEach((contentResult) => {
+      rules.push(addModule({ sourceRoot, contentResult }));
+      rules.push(addDeclarationToModule({ name: contentResult.name, sourceRoot: contentResult.path }));
+    });
+
+    repositories.forEach((contentResult) => {
+      rules.push(addRepository({ sourceRoot, contentResult }));
+    });
 
     getDTOs.forEach((contentResult) => {
       rules.push(addDTO(contentResult, 'GET'));
@@ -105,35 +101,34 @@ function addDTO({ name, content, path, imports }: ContentResult, dtoType: 'GET' 
   return addFilesToTree({ name, content, imports }, `${path}`, [DTOMap[dtoType]], './files');
 }
 
-function addRepository({ name, sourceRoot }: Pick<SchematicOptions, 'sourceRoot' | 'name'>) {
-  const nameSinglularClassify = pluralize.singular(strings.classify(name));
-  const nameSinglularDasherize = toSinglularDasherize(name);
-  const { identifiers, moduleSpecifier } = repositoryImportData(nameSinglularClassify, nameSinglularDasherize);
-  const importInput: ImportDeclaration = createImportStatement(identifiers as string[], moduleSpecifier);
-  const importText = getImportAsText(importInput);
-
+function addRepository({
+  sourceRoot,
+  contentResult: { name, imports },
+}: {
+  sourceRoot: string;
+  contentResult: ContentResult;
+}) {
   // TODO: add the common configs files to the project.
   // * For now we can assume the we are using a single project.
   // TODO: check if the workspace is a single project or multiproject.
 
   return addFilesToTree(
-    { name: nameSinglularClassify, importText },
+    { name, imports },
     `${sourceRoot}`,
     ['__name@singular@dasherize__.repository.ts.template'],
     './files',
   );
 }
 
-function addService({ name, sourceRoot }: Pick<SchematicOptions, 'sourceRoot' | 'name'>) {
-  const nameSinglularClassify = toSinglularClassify(name);
-  const nameSinglularDasherize = toSinglularDasherize(name);
-
-  const importsInput: ImportDeclaration[] = createImportsStatement(
-    serviceImportsData(nameSinglularClassify, nameSinglularDasherize),
-  );
-
+function addService({
+  sourceRoot,
+  contentResult: { name, imports },
+}: {
+  sourceRoot: string;
+  contentResult: ContentResult;
+}) {
   return addFilesToTree(
-    { name: nameSinglularClassify, imports: getImportsAsText(importsInput) },
+    { name, imports },
     `${sourceRoot}`,
     ['__name@singular@dasherize__.service.ts.template'],
     './files',
@@ -168,44 +163,32 @@ function addCommonFiles({ sourceRoot }: Pick<SchematicOptions, 'sourceRoot'>) {
   };
 }
 
-function addResolver({ name, sourceRoot }: Pick<SchematicOptions, 'sourceRoot' | 'name'>) {
-  const nameSinglularClassify = toSinglularClassify(name);
-  const nameSinglularDasherize = toSinglularDasherize(name);
-
-  const importsInput: ImportDeclaration[] = createImportsStatement(
-    resolverImportsData(nameSinglularClassify, nameSinglularDasherize),
-  );
-
+function addResolver({
+  sourceRoot,
+  contentResult: { name, imports },
+}: {
+  sourceRoot: string;
+  contentResult: ContentResult;
+}) {
   return addFilesToTree(
-    { name: nameSinglularClassify, imports: getImportsAsText(importsInput) },
+    { name, imports },
     `${sourceRoot}`,
     ['__name@singular@dasherize__.resolver.ts.template'],
     './files',
   );
 }
 
-function addModule({ name, sourceRoot }: Pick<SchematicOptions, 'sourceRoot' | 'name'>) {
-  const nameSinglularClassify = toSinglularClassify(name);
-  const nameSinglularDasherize = toSinglularDasherize(name);
-
-  const importsInput: ImportDeclaration[] = createImportsStatement(
-    moduleImportsData(nameSinglularClassify, nameSinglularDasherize),
-  );
-
-  const providers = moduleProvidersData(nameSinglularClassify).join(', ');
-  const controllers = [];
-
+function addModule({
+  sourceRoot,
+  contentResult: { name, imports, content },
+}: {
+  sourceRoot: string;
+  contentResult: ContentResult;
+}) {
   return addFilesToTree(
-    { name: nameSinglularClassify, imports: getImportsAsText(importsInput), providers, controllers },
+    { name, imports, content },
     `${sourceRoot}`,
     ['__name@dasherize__.module.ts.template'],
     './files',
   );
-}
-
-function toSinglularClassify(name: string) {
-  return pluralize.singular(strings.classify(name));
-}
-function toSinglularDasherize(name: string) {
-  return pluralize.singular(strings.dasherize(name));
 }
