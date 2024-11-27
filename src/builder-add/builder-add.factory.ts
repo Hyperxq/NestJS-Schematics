@@ -10,13 +10,13 @@ import { Rule, chain, schematic } from '@angular-devkit/schematics';
 
 export function builderAddFactory({
   skipPreparation,
-  packageManager,
+  skipPrev,
 }: {
   skipPreparation: boolean;
-  packageManager: string;
+  skipPrev: boolean;
 }): Rule {
   return () => {
-    if (skipPreparation) {
+    if (skipPreparation || skipPrev) {
       return;
     }
 
