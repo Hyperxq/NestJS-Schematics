@@ -5,7 +5,7 @@ import { ContentResult, IPropertyFactory, SchemaMetadata } from '../../interface
 import { toSinglularClassify, toSinglularDasherize } from '../../to-string';
 
 export class ResolverFactory implements IPropertyFactory {
-  generate(properties: SchemaMetadata[]): ContentResult[] {
+  generate(properties: SchemaMetadata[] = []): ContentResult[] {
     return properties
       .filter((p) => p.mainElement)
       .map(({ name, path }) => {

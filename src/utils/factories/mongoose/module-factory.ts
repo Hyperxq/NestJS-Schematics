@@ -29,8 +29,8 @@ export class ModuleFactory implements IPropertyFactory {
             DatabaseModule,
             MongooseModule.forFeature([
                 {
-                    name: ${name}.name,
-                    schema: ${name}Schema,
+                    name: ${pluralize.singular(strings.classify(name))}.name,
+                    schema: ${pluralize.singular(strings.classify(name))}Schema,
                     collection: '${strings.camelize(pluralize.plural(name))}',
                 },
             ]),

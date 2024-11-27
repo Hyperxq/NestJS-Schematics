@@ -10,7 +10,7 @@ export class <%= singular(classify(name)) %>Resolver {
         return this.<%= singular(lowercased(name)) %>Service.create(create<%= singular(classify(name)) %>);
     }
 
-    @Query(() => [<%= singular(classify(name)) %>], {name: '<%= plural(name) %>', description: 'returns list of <%= name %>'})
+    @Query(() => [<%= singular(classify(name)) %>], {name: '<%= plural(name) %>', description: 'returns list of <%= singular(classify(name)) %>'})
     findAll() {
         return this.<%= singular(lowercased(name)) %>Service.findAll();
     }

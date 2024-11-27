@@ -3,26 +3,26 @@ import { Injectable } from '@nestjs/common';
 
 
 @Injectable()
-export class <%= name %>Service {
-    constructor(private readonly repo: <%= name %>Repository) {}
+export class <%= singular(classify(name)) %>Service {
+    constructor(private readonly repo: <%= singular(classify(name)) %>Repository) {}
 
-    async create(create<%= name %>: Create<%= name %>Input): Promise<<%= name %>> {
-        return await this.repo.create<Create<%= name %>Input, <%= name %>>(create<%= name %>);
+    async create(create<%= singular(classify(name)) %>: Create<%= singular(classify(name)) %>Input): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.create<Create<%= singular(classify(name)) %>Input, <%= singular(classify(name)) %>>(create<%= singular(classify(name)) %>);
     }
 
-    async findAll(): Promise<<%= name %>[] | undefined> {
-        return await this.repo.findMany<<%= name %>>({});
+    async findAll(): Promise<<%= singular(classify(name)) %>[] | undefined> {
+        return await this.repo.findMany<<%= singular(classify(name)) %>>({});
     }
 
-    async findOne(get<%= name %>: Get<%= name %>Input): Promise<<%= name %>> {
-        return await this.repo.findOne<<%= name %>>(get<%= name %>);
+    async findOne(get<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>Input): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.findOne<<%= singular(classify(name)) %>>(get<%= singular(classify(name)) %>);
     }
 
-    async update({query, payload}: Update<%= name %>Args): Promise<<%= name %>> {
-        return await this.repo.update<<%= name %>>(query, payload, {upsert: false});
+    async update({query, payload}: Update<%= singular(classify(name)) %>Args): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.update<<%= singular(classify(name)) %>>(query, payload, {upsert: false});
     }
 
-    async remove(remove<%= name %>: Get<%= name %>Input): Promise<<%= name %>> {
-        return await this.repo.remove<<%= name %>>(remove<%= name %>);
+    async remove(remove<%= singular(classify(name)) %>: Get<%= singular(classify(name)) %>Input): Promise<<%= singular(classify(name)) %>> {
+        return await this.repo.remove<<%= singular(classify(name)) %>>(remove<%= singular(classify(name)) %>);
     }
 }
